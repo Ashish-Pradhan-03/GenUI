@@ -1,335 +1,136 @@
-import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { Sparkles } from "lucide-react";
 import Select from "react-select";
-import { ArrowUpRightFromSquareIcon, Code2Icon, Copy, RefreshCw, Sparkles } from "lucide-react";
-import { CgExport } from "react-icons/cg";
-import { IoCloseSharp } from "react-icons/io5";
-import { ClipLoader } from "react-spinners";
-import { toast } from "react-toastify";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-monokai";
-
 
 function Home() {
+  const navigate = useNavigate();
   const options = [
     { value: "html-css-bootstrap", label: "HTML + CSS + Bootstrap" },
     { value: "html-tailwind-js", label: "HTML + Tailwind CSS + JS" },
     { value: "html-css-js", label: "HTML + CSS + JS" },
-    { value: "react-css", label: "React JS + CSS" },
+    { value: "react-tailwind", label: "React JS + Tailwind CSS" },
   ];
 
-  const [outputScreen, setOutputScreen] = useState(false);
-  const [tab, setTab] = useState(1);
+  // use same object from options to avoid mismatch
+  const [framework, setFramework] = useState(options[2]);
   const [prompt, setPrompt] = useState("");
-  const [frameWork, setFrameWork] = useState(options[0]);
-  const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isNewTabOpen, setIsNewTabOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [progressStep, setProgressStep] = useState("");
-  const [progressPercent, setProgressPercent] = useState(0);
-  const progressInterval = useRef(null);
 
   useEffect(() => {
-    return () => {
-      if (progressInterval.current) clearInterval(progressInterval.current);
-    };
+    const setVh = () => document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    setVh();
+    window.addEventListener('resize', setVh);
+    return () => window.removeEventListener('resize', setVh);
   }, []);
 
-  // 🧠 Extract code safely from ``` blocks
-  function extractCode(response) {
-    const match = response.match(/```(?:\w+)?\n?([\s\S]*?)```/);
-    return match ? match[1].trim() : response.trim();
-  }
-
-  // 🚀 Generate code from backend
-  async function getResponse() {
-    if (!prompt.trim()) return toast.error("Please describe your component first");
-
-    try {
-      setLoading(true);
-      setOutputScreen(true);
-      setProgressPercent(5);
-      setProgressStep("Analyzing prompt");
-
-      if (progressInterval.current) clearInterval(progressInterval.current);
-      progressInterval.current = setInterval(() => {
-        setProgressPercent((p) => Math.min(95, p + Math.floor(Math.random() * 6) + 1));
-      }, 700);
-
-      //  Call relative API path for Vercel
-      const resp = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt.trim(), framework: frameWork.value }),
-      });
-
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        console.error("Generation error", err);
-        toast.error(err?.error || "Generation failed on server");
-        return;
-      }
-
-      const data = await resp.json();
-      setCode(extractCode(data.code || ""));
-      setOutputScreen(true);
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong while generating code");
-    } finally {
-      if (progressInterval.current) clearInterval(progressInterval.current);
-      setProgressPercent(100);
-      setProgressStep("Finalizing");
-      await new Promise((r) => setTimeout(r, 600));
-      setLoading(false);
-      setTimeout(() => {
-        setProgressPercent(0);
-        setProgressStep("");
-      }, 400);
-    }
-  }
-
-  //  Copy code
-  const copyCode = async () => {
-    if (!code.trim()) return toast.error("No code to copy");
-    try {
-      await navigator.clipboard.writeText(code);
-      toast.success("Code copied to clipboard");
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-      toast.error("Failed to copy");
-    }
-  };
-
-  // 💾 Download HTML file
-  const downloadFile = () => {
-    if (!code.trim()) return toast.error("No code to download");
-
-    const blob = new Blob([code], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Generated-Component.html";
-    link.click();
-    URL.revokeObjectURL(url);
-    toast.success("File downloaded");
-  };
-
-  // 🎨 Custom theme for react-select
   const themeStyles = {
     control: (base, state) => ({
       ...base,
-      backgroundColor: "var(--background-secondary)",
-      borderColor: state.isFocused ? "#0EA5E9" : "rgba(255,255,255,0.15)",
+      backgroundColor: "var(--background-tertiary)",
+      borderColor: state.isFocused ? "var(--accent)" : "var(--btn-border)",
       color: "var(--text-primary)",
-      boxShadow: state.isFocused ? "0 0 0 2px #0EA5E9" : "none",
-      "&:hover": { borderColor: "#0EA5E9" },
-      minHeight: "40px",
-      fontSize: "15px",
+      minHeight: "44px",
+      cursor: "pointer",
+      boxShadow: 'none'
     }),
-    input: (base) => ({ ...base, color: "var(--text-primary)" }),
-    singleValue: (base) => ({ ...base, color: "var(--text-primary)" }),
-    placeholder: (base) => ({ ...base, color: "var(--text-secondary)" }),
     menu: (base) => ({
       ...base,
-      backgroundColor: "var(--background-tertiary)",
+      backgroundColor: "var(--background-secondary)",
       color: "var(--text-primary)",
-      border: "1px solid rgba(255,255,255,0.1)",
+      border: '1px solid var(--btn-border)'
     }),
+    singleValue: (base) => ({ ...base, color: "var(--text-primary)" }),
+    placeholder: (base) => ({ ...base, color: "var(--text-secondary)" }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isFocused ? "#0ea5e966" : "transparent",
-      color: state.isFocused ? "#ffffff" : "var(--text-primary)",
-      cursor: "pointer",
+      backgroundColor: 'transparent',
+      color: state.isFocused ? '#ffffff' : 'var(--text-primary)',
+      cursor: 'pointer',
+      paddingLeft: 12,
+      borderLeft: state.isFocused ? `4px solid var(--accent)` : '4px solid transparent'
     }),
   };
 
+  const handleGenerate = () => {
+    if (!prompt.trim()) return;
+    // pass both value and label so the next page can display them if needed
+    navigate("/generate", { state: { prompt, frameworkValue: framework.value, frameworkLabel: framework.label } });
+  };
+
+  // submit on Ctrl/Cmd + Enter
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      handleGenerate();
+    }
+  };
+
   return (
-    <>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        background: "linear-gradient(180deg, var(--background-primary), var(--background-secondary))",
+        color: "var(--text-primary)",
+      }}
+    >
       <Navbar />
 
-      <div className="flex flex-col md:flex-row items-start justify-between gap-5 px-5 sm:px-10 md:px-[100px] py-6">
-        {/* 🧩 Left Section */}
-        <div
-          className="w-full md:w-1/2 rounded-2xl p-5 md:p-7"
-          style={{ backgroundColor: "var(--card-bg)" }}
-        >
-          <h3 className="text-xl font-semibold nav-text">AI Component Generator</h3>
-          <p
-            className="mt-2 text-base md:text-lg"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Describe your component, and AI will generate it for you.
-          </p>
+      <div className="flex flex-col justify-center items-center flex-1 px-4 text-center">
+        <h1 className="text-4xl font-bold mb-4 text-primary nav-text">AI Component Generator</h1>
+        <p className="mb-8 max-w-md text-secondary">
+          Create stunning components by chatting with AI.
+        </p>
 
-          <p className="text-sm font-bold mt-4" style={{ color: "var(--text-secondary)" }}>
-            Choose your Framework
-          </p>
-          <div className="mt-2">
+        <div
+          className="w-full max-w-2xl rounded-2xl p-6 shadow-xl card"
+          style={{
+            border: "1px solid var(--btn-border)",
+          }}
+        >
+          <div className="mb-4 text-left">
+            <label className="block text-sm mb-2 text-secondary" htmlFor="framework-select">Framework</label>
             <Select
+              inputId="framework-select"
               options={options}
               styles={themeStyles}
-              value={frameWork}
-              onChange={(selected) => setFrameWork(selected)}
-              placeholder="Select Framework..."
+              value={framework}
+              onChange={setFramework}
+              aria-label="Framework selector"
+              menuPortalTarget={document.body} // optional: avoids clipping inside constrained containers
             />
           </div>
 
-          <p className="text-sm font-bold mt-4" style={{ color: "var(--text-secondary)" }}>
-            Describe Your Component
-          </p>
-
           <textarea
-            onChange={(e) => setPrompt(e.target.value)}
             value={prompt}
-            className="w-full h-[200px] sm:h-[250px] mt-2 rounded-xl p-3 resize-none"
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="e.g., A responsive login form with gradient background..."
+            aria-label="Prompt for component generation"
+            className="w-full h-40 rounded-xl p-4 resize-none"
             style={{
-              backgroundColor: "var(--background-tertiary)",
+              background: "var(--background-tertiary)",
               color: "var(--text-primary)",
+              border: "1px solid var(--btn-border)",
             }}
-            placeholder="e.g., Responsive login form with inputs and gradient background"
           />
 
           <button
-            onClick={getResponse}
-            disabled={loading}
-            className="flex items-center justify-center mt-3 px-6 py-2 rounded-lg border-0 cursor-pointer bg-gradient-to-r from-sky-400 to-indigo-500 hover:brightness-110 transition-all duration-500 font-mono text-lg ml-auto gap-2 w-full sm:w-auto"
+            onClick={handleGenerate}
+            disabled={!prompt.trim()}
+            aria-disabled={!prompt.trim()}
+            className={`w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-xl font-medium cursor-pointer transition ${!prompt.trim() ? 'opacity-100' : ''}`}
+            style={{
+              background: "var(--accent)",
+              color: "#fff",
+              border: "1px solid transparent",
+            }}
+            title={prompt.trim() ? "Generate component" : "Enter a prompt to generate"}
           >
-            {loading ? <ClipLoader color="#fff" size={20} /> : <Sparkles className="w-5 h-5" />}
-            {loading ? "Generating..." : "Generate"}
+            <Sparkles className="w-5 h-5" /> Generate
           </button>
         </div>
-
-        {/* 🧠 Right Section */}
-        <div
-          className="w-full md:w-1/2 h-[300px] sm:h-[400px] md:h-[80vh] rounded-2xl p-5 flex flex-col items-center justify-center text-center min-h-0 relative overflow-hidden"
-          style={{ backgroundColor: "var(--card-bg)" }}
-        >
-          {!outputScreen ? (
-            <>
-              <div className="outputScreen w-[70px] h-[70px] rounded-full bg-gradient-to-r from-sky-400 to-indigo-500 flex justify-center items-center">
-                <Code2Icon className="w-10 h-10" />
-              </div>
-              <p className="text-base sm:text-xl mt-3" style={{ color: "var(--text-secondary)" }}>
-                Your preview will appear here once ready.
-              </p>
-            </>
-          ) : (
-            <>
-              {/* Tabs */}
-              <div className="top w-full h-17 flex items-center gap-3.5 px-5">
-                <button
-                  onClick={() => setTab(1)}
-                  className={`tab-btn w-1/2 text-xl ${tab === 1 ? "tab-active" : ""}`}
-                >
-                  Code
-                </button>
-                <button
-                  onClick={() => setTab(2)}
-                  className={`tab-btn w-1/2 text-xl ${tab === 2 ? "tab-active" : ""}`}
-                >
-                  Preview
-                </button>
-              </div>
-
-              {/* Toolbar */}
-              <div className="top w-full h-16 flex items-center justify-between gap-3.5 px-5">
-                <p className="font-bold">Code Editor</p>
-                <div className="flex items-center gap-2.5">
-                  {tab === 1 ? (
-                    <>
-                      <button onClick={copyCode} className="tool-btn cursor-pointer mr-2">
-                        <Copy />
-                      </button>
-                      <button onClick={downloadFile} className="tool-btn cursor-pointer text-2xl">
-                        <CgExport />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={() => setIsNewTabOpen(true)} className="tool-btn cursor-pointer text-2xl">
-                        <ArrowUpRightFromSquareIcon />
-                      </button>
-                      <button onClick={() => setRefreshKey((prev) => prev + 1)} className="tool-btn cursor-pointer text-2xl">
-                        <RefreshCw />
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Editor / Preview */}
-              <div className="editor flex-1 min-h-0 w-full">
-                {tab === 1 ? (
-                  <Suspense
-                    fallback={
-                      <div className="text-gray-400 text-center py-10">Loading editor...</div>
-                    }
-                  >
-                    <AceEditor
-                      value={code}
-                      mode="javascript"
-                      theme="monokai"
-                      name="code-editor"
-                      fontSize={16}
-                      width="100%"
-                      height="400px"
-                      setOptions={{ useWorker: false }}
-                    />
-                  </Suspense>
-                ) : (
-                  <iframe
-                    key={refreshKey}
-                    srcDoc={code}
-                    className="w-full h-full bg-white text-black"
-                    sandbox="allow-scripts"
-                  ></iframe>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Loading Overlay */}
-          {loading && (
-            <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/50 backdrop-blur-sm">
-              <div className="w-full max-w-md text-center">
-                <ClipLoader color="#a78bfa" size={40} />
-                <p className="text-gray-300 mt-4">{progressStep || "Starting..."}</p>
-                <div className="mt-3 w-full bg-zinc-800 h-3 rounded-full overflow-hidden">
-                  <div
-                    style={{ width: `${progressPercent}%` }}
-                    className="h-3 bg-sky-500 transition-all duration-500"
-                  ></div>
-                </div>
-                <p className="text-gray-400 text-sm mt-1">{progressPercent}%</p>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
-
-      {/* Fullscreen Preview */}
-      {isNewTabOpen && (
-        <div className="fixed inset-0 bg-white w-screen h-screen overflow-auto z-[9999]">
-          <div className="text-black w-full h-[60px] flex items-center justify-between px-5 bg-gray-100">
-            <p className="font-bold">Preview</p>
-            <button
-              onClick={() => setIsNewTabOpen(false)}
-              className="w-10 h-10 rounded-xl border border-zinc-300 flex items-center justify-center hover:bg-gray-200"
-            >
-              <IoCloseSharp />
-            </button>
-          </div>
-          <iframe
-            srcDoc={code}
-            className="w-full h-[calc(100vh-60px)]"
-            sandbox="allow-scripts"
-          ></iframe>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
 

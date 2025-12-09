@@ -8,7 +8,6 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-// Lazy import of @google/genai so project can run without server deps in client-only mode
 let GoogleGenAI;
 try {
   GoogleGenAI = (await import('@google/genai')).GoogleGenAI;

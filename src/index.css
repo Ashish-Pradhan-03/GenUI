@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+
+@theme inline {
+  --font-genui: "Montserrat";
+}
+
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
+:root {
+  --background-primary: #0e0d0b;
+  --background-secondary: #181612;
+  --background-tertiary: #201e19;
+  --card-bg: #181612;
+
+  --text-primary: #f9f9f9;
+  --text-secondary: #a1a1aa;
+
+  --accent: #74f50b;
+
+  --btn-bg: #000000;
+  --btn-text: #ffffff;
+  --btn-border: rgba(255, 255, 255, 0.06);
+  --btn-hover-bg: #0b0b0b;
+
+  --icon-hover-bg: rgba(255, 255, 255, 0.03);
+
+  --surface-glow: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.04);
+}
+
+.light {
+  --background-primary: #f7f7f6;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f2f2f1;
+  --card-bg: #ffffff;
+
+  --text-primary: #111111;
+  --text-secondary: #5b5b56;
+
+  --accent: #111827;
+
+  --btn-bg: #fbfbfb;
+  --btn-text: #111111;
+  --btn-border: rgba(0, 0, 0, 0.06);
+  --btn-hover-bg: #f0efee;
+
+  --icon-hover-bg: rgba(0, 0, 0, 0.03);
+
+  --surface-glow: rgba(0, 0, 0, 0.02);
+  --glass-border: rgba(0, 0, 0, 0.04);
+}
+
+.nav-text {
+  background: linear-gradient(90deg, #7f5cff 0%, #00d4ff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.nav-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--glass-border);
+  background-color: var(--background-secondary);
+
+  transition: transform .15s, background-color .15s, border-color .15s;
+  color: var(--text-primary);
+}
+
+.nav-icon:hover {
+  background-color: var(--icon-hover-bg);
+}
+
+
+.nav-icon svg,
+.icon-btn svg {
+  color: inherit;
+  fill: currentColor;
+}
+
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 0.5rem;
+  border: 1px solid var(--btn-border);
+
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+
+  transition: background-color 150ms, transform 120ms, border-color 120ms;
+}
+
+.icon-btn:hover {
+  background-color: var(--icon-hover-bg);
+  transform: translateY(-1px);
+}
+
+.card {
+  background: var(--card-bg);
+  color: var(--text-primary);
+
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+
+  transition: transform 180ms ease, box-shadow 180ms ease;
+
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(245, 158, 11, 0.06);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.65),
+    0 0 70px rgba(245, 158, 11, 0.08);
+}
+
+
+input,
+textarea,
+select {
+  color: var(--text-primary);
+  background: var(--background-tertiary);
+  border: 1px solid var(--btn-border);
+  border-radius: 0.5rem;
+
+  transition: box-shadow .12s, border-color .12s;
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 4px 18px var(--surface-glow);
+  border-color: var(--accent);
+}
+
+
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: var(--accent);
+}
+
+
+button[disabled],
+button[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.05);
+}
+
+
+kbd {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+
+  padding: 2px 6px;
+  font-size: 0.8rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Spinner (optional) */
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #fff;
+
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: background-color 120ms, transform 120ms, color 120ms;
+  border: 1px solid transparent;
+}
+
+.header-icon:hover {
+  color: var(--text-primary);
+  background: var(--icon-hover-bg);
+  transform: translateY(-2px);
+}
+
+.preview-panel {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}

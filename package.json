@@ -1,14 +1,14 @@
 {
   "name": "ai-component-generator",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently \"npm:server\" \"npm:dev\"",
     "build": "vite build",
     "lint": "eslint .",
-    "server": "node ./server/generate.js",
+    "server": "node ./api/generate.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@google/genai": "^1.25.0",
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.1.14",
+    "@vercel/speed-insights": "^1.2.0",
     "ace-builds": "^1.43.4",
     "concurrently": "^8.2.0",
     "cors": "^2.8.5",
@@ -49,7 +50,8 @@
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "eslint.config.js",
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "git+ https://github.com/akash-meher-78/AutoUI.git"
   },
   "keywords": [],
   "author": "",
