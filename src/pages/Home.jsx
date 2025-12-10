@@ -61,6 +61,9 @@ function Home() {
       cursor: "pointer",
       boxShadow: "none",
       zIndex: 2,
+      "&:hover": {
+        borderColor: "var(--accent)",
+      },
     }),
     menuPortal: (base) => ({ ...base, zIndex: 50 }),
     menu: (base) => ({
@@ -73,13 +76,21 @@ function Home() {
     singleValue: (base) => ({ ...base, color: "var(--text-primary)" }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isFocused
-        ? "rgba(99,179,255,0.1)"
-        : "transparent",
-      color: state.isFocused ? "#ffffff" : "var(--text-primary)",
+      backgroundColor: state.isSelected
+        ? "var(--accent)"
+        : state.isFocused
+          ? "rgba(99,179,255,0.12)"
+          : "transparent",
+      color: state.isSelected
+        ? "#ffffff"
+        : "var(--text-primary)",
       cursor: "pointer",
       paddingLeft: 16,
       transition: "background-color 0.15s ease, color 0.15s ease",
+      "&:hover": {
+        backgroundColor: "rgba(99,179,255,0.18)",
+        color: "#ffffff",
+      },
     }),
   };
 
@@ -111,13 +122,13 @@ function Home() {
       <div className="bolt-arc" aria-hidden="true" />
 
       <main className="flex flex-col items-center justify-center flex-1 px-4 sm:px-6 text-center relative z-10">
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">
+        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-4 ">
           <span className="hero-text-strong">What will you </span>
-          <span className="hero-text-accent">build</span>
+          <span className="hero-text-accent font-logo">build</span>
           <span className="hero-text-strong"> today?</span>
         </h1>
 
-        <p className="text-secondary text-base sm:text-lg max-w-2xl mb-10">
+        <p className=" text-base sm:text-lg max-w-2xl mb-10 font-ui">
           Create stunning apps and components by chatting with AI. Pick your
           stack, describe the idea, and we will generate the code and preview
           instantly.
@@ -125,9 +136,9 @@ function Home() {
 
         <div className="w-full max-w-3xl glass-panel rounded-2xl p-6 sm:p-7 shadow-2xl">
           <div className="flex flex-col gap-4">
-            {/* Framework Dropdown */}
-            <div className="text-left">
-              <label className="block text-xs uppercase tracking-[0.08em] mb-2 text-secondary">
+  
+            <div className="text-left font-para">
+              <label className="block text-xs uppercase tracking-[0.08em] mb-2">
                 Framework
               </label>
               <Select
@@ -137,11 +148,12 @@ function Home() {
                 value={framework}
                 onChange={setFramework}
                 menuPortalTarget={document.body}
+                classNamePrefix="genui-select" // helps avoid global CSS conflicts
               />
             </div>
 
             <div className="text-left">
-              <label className="block text-xs uppercase tracking-[0.08em] mb-2 text-secondary">
+              <label className="block text-xs uppercase tracking-[0.08em] mb-2">
                 Your idea
               </label>
               <textarea
@@ -163,9 +175,8 @@ function Home() {
                 onClick={handleGenerate}
                 disabled={!prompt.trim()}
                 aria-disabled={!prompt.trim()}
-                className={`cta-button px-7 cursor-pointer py-3 rounded-full font-semibold inline-flex items-center justify-center gap-2 text-base ${
-                  !prompt.trim() ? "opacity-80" : ""
-                }`}
+                className={`cta-button px-7 cursor-pointer py-3 rounded-full font-semibold inline-flex items-center justify-center gap-2 text-base ${!prompt.trim() ? "opacity-80" : ""
+                  }`}
               >
                 Build now
                 <SendHorizontalIcon className="w-5 h-5" />

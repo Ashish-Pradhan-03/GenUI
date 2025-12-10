@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
-
-@theme inline {
-  --font-genui: "Montserrat";
+.font-logo {
+  font-family: "Nabla", system-ui;
 }
 
+.font-header {
+  font-family: "Carter One";
+}
+
+.font-para {
+  font-family: "JetBrains Mono", system-ui;
+}
+
+.font-ui {
+  font-family: "Inter", system-ui, sans-serif;
+  font-optical-sizing: auto;
+}
 
 html {
   scroll-behavior: smooth;
@@ -27,7 +38,7 @@ body {
   --card-bg: rgba(17, 26, 45, 0.7);
 
   --text-primary: #f7f9ff;
-  --text-secondary: #b9c3d9;
+
 
   --accent: #63b3ff;
 
@@ -42,30 +53,8 @@ body {
   --glass-border: rgba(255, 255, 255, 0.08);
 }
 
-.light {
-  --background-primary: #f2f6ff;
-  --background-secondary: #ffffff;
-  --background-tertiary: #e8eefb;
-  --card-bg: rgba(255, 255, 255, 0.9);
-
-  --text-primary: #0b1428;
-  --text-secondary: #45526d;
-
-  --accent: #1e3a8a;
-
-  --btn-bg: #e6edff;
-  --btn-text: #0b1428;
-  --btn-border: rgba(14, 22, 48, 0.12);
-  --btn-hover-bg: #d8e4ff;
-
-  --icon-hover-bg: rgba(0, 0, 0, 0.04);
-
-  --surface-glow: rgba(30, 58, 138, 0.12);
-  --glass-border: rgba(0, 0, 0, 0.05);
-}
-
 .nav-text {
-  background: linear-gradient(90deg, #7f5cff 0%, #00d4ff 100%);
+  background: linear-gradient(90deg, #ebf0f0 0%, #e6e8e8 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -147,8 +136,8 @@ body {
 .bolt-bg {
   position: relative;
   background: radial-gradient(circle at 50% 120%, rgba(88, 157, 255, 0.25), transparent 60%),
-              radial-gradient(circle at 50% 140%, rgba(99, 255, 216, 0.25), transparent 58%),
-              linear-gradient(180deg, #050914 0%, #060b18 40%, #03050c 100%);
+    radial-gradient(circle at 50% 140%, rgba(99, 255, 216, 0.25), transparent 58%),
+    linear-gradient(180deg, #050914 0%, #060b18 40%, #03050c 100%);
   overflow: hidden;
 }
 
@@ -197,7 +186,7 @@ body {
 
 .cta-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(99, 179, 255, 0.35);
+  box-shadow: 0 2px 5px rgba(99, 179, 255, 0.35);
 }
 
 .pill {
@@ -263,7 +252,12 @@ kbd {
 
   animation: spin 0.75s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .header-icon {
   display: inline-flex;

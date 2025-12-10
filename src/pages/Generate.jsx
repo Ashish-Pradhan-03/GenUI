@@ -149,7 +149,6 @@ function Generate() {
       className="min-h-screen flex flex-col relative bolt-bg"
       style={{ color: "var(--text-primary)" }}
     >
-      <Navbar />
 
       <div className="flex-1 grid md:grid-cols-2 gap-4 p-4">
         {/* Code panel */}
@@ -260,7 +259,7 @@ function Generate() {
               className="h-3 transition-all duration-500"
             />
           </div>
-          <p className="text-secondary text-sm mt-1">
+          <p className=" text-sm mt-1">
             {progressPercent}%
           </p>
         </div>
